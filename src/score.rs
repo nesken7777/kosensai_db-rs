@@ -1,6 +1,6 @@
 use crate::CELL;
 use axum::Json;
-use mysql_async::{prelude::Queryable, Conn, Params, Row, Value};
+use mysql_async::{prelude::Queryable, Conn, Params, Row};
 use serde::Serialize;
 
 pub async fn score() -> Json<ReturnParams> {
@@ -16,10 +16,17 @@ pub async fn score() -> Json<ReturnParams> {
 }
 
 async fn scores(mut conn: Conn, column_name: &str) -> (Vec<Score>, Conn) {
+    let query = {
+        let mut query = String::with_capacity(50);
+        query.push_str("select * from status order by ");
+        query.push_str(column_name);
+        query.push_str(" desc limit 0, 5");
+        query
+    };
     let result = conn
         .exec::<Row, _, _>(
-            "select score1 from status order by ? desc limit 0, 5",
-            Params::Positional(vec![Value::from(column_name)]),
+            query,
+            Params::Empty,
         )
         .await
         .unwrap_or_else(|e| {
@@ -29,6 +36,7 @@ async fn scores(mut conn: Conn, column_name: &str) -> (Vec<Score>, Conn) {
     (
         result
             .iter()
+            .take(5)
             .map(|x| Score {
                 score: x.get::<u32, _>(column_name).unwrap(),
                 name: x.get::<String, _>("name").unwrap(),
