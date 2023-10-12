@@ -24,10 +24,7 @@ async fn scores(mut conn: Conn, column_name: &str) -> (Vec<Score>, Conn) {
         query
     };
     let result = conn
-        .exec::<Row, _, _>(
-            query,
-            Params::Empty,
-        )
+        .exec::<Row, _, _>(query, Params::Empty)
         .await
         .unwrap_or_else(|e| {
             eprintln!("エラーある: {}", e);
@@ -38,8 +35,8 @@ async fn scores(mut conn: Conn, column_name: &str) -> (Vec<Score>, Conn) {
             .iter()
             .take(5)
             .map(|x| Score {
-                score: x.get::<u32, _>(column_name).unwrap(),
                 name: x.get::<String, _>("name").unwrap(),
+                score: x.get::<u32, _>(column_name).unwrap(),
             })
             .collect(),
         conn,
@@ -54,6 +51,6 @@ pub struct ReturnParams {
 
 #[derive(Debug, Default, Serialize)]
 struct Score {
-    score: u32,
     name: String,
+    score: u32,
 }
