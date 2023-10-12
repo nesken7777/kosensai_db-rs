@@ -5,38 +5,23 @@ use serde::Deserialize;
 use crate::CELL;
 
 pub async fn update(Query(query): Query<StatusParams>) {
-    if let Some(exec) = query
-        .score1
-        .map(|score1| update_status(query.id, "score1", score1))
-    {
-        exec.await;
+    if let Some(score1) = query.score1 {
+        update_status(query.id, "score1", score1).await;
     }
-    if let Some(exec) = query
-        .score2
-        .map(|score2| update_status(query.id, "score2", score2))
-    {
-        exec.await;
+    if let Some(score2) = query.score2 {
+        update_status(query.id, "score2", score2).await;
     }
-    if let Some(exec) = query
-        .speed
-        .map(|speed| update_status(query.id, "speed", speed))
-    {
-        exec.await;
+    if let Some(speed) = query.speed {
+        update_status(query.id, "speed", speed).await;
     }
-    if let Some(exec) = query
-        .stamina
-        .map(|stamina| update_status(query.id, "stamina", stamina))
-    {
-        exec.await;
+    if let Some(stamina) = query.stamina {
+        update_status(query.id, "stamina", stamina).await;
     }
-    if let Some(exec) = query.luck.map(|luck| update_status(query.id, "luck", luck)) {
-        exec.await;
+    if let Some(luck) = query.luck {
+        update_status(query.id, "luck", luck).await;
     }
-    if let Some(exec) = query
-        .power
-        .map(|power| update_status(query.id, "power", power))
-    {
-        exec.await;
+    if let Some(power) = query.power {
+        update_status(query.id, "power", power).await;
     }
 }
 
