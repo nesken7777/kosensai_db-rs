@@ -15,7 +15,7 @@ pub async fn score() -> Json<ReturnParams> {
     Json(ReturnParams { score1, score2 })
 }
 
-async fn scores(mut conn: Conn, column_name: &str) -> (Vec<Score>, Conn) {
+async fn scores(mut conn: Conn, column_name: &'static str) -> (Vec<Score>, Conn) {
     let query = {
         let mut query = String::with_capacity(50);
         query.push_str("select * from status order by ");
